@@ -1,0 +1,31 @@
+services:
+  seed:
+    build: ./server
+    command: node -e "process.env.NODE_PATH='.';" dist/seedDocker.js
+    environment:
+      MONGODB_URI: ${MONGODB_URI}
+      JWT_SECRET: placeholder
+    depends_on: []
+
+  server:
+    build: ./server
+    ports:
+      - "5000:5000"
+    environment:
+      PORT: 5000
+      MONGODB_URI: ${MONGODB_URI}
+      JWT_SECRET: ${JWT_SECRET}
+      CLIENT_URL: http://localhost
+    depends_on:
+      seed:
+        condition: service_completed_successfully
+
+  client:
+    build:
+      context: ./client
+      args:
+        VITE_API_URL: /api
+    ports:
+      - "3000:80"
+    depends_on:
+      - server

@@ -22,6 +22,7 @@ const BirthdaySchema = new Schema<IBirthday>(
 // Compound index: filters birthdays by user, then sorts/ranges on date.
 // Leftmost-prefix rule means queries on createdBy alone also use this index,
 // so no separate single-field index on createdBy is needed.
+BirthdaySchema.index({ createdBy: 1 });
 BirthdaySchema.index({ createdBy: 1, birthDate: 1 });
 
 export const Birthday = mongoose.model<IBirthday>('Birthday', BirthdaySchema);
